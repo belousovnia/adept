@@ -2,7 +2,6 @@ import styles from "./App.module.scss";
 import CompanyTable from "./components/CompanyTable";
 import Header from "./components/Header";
 import { useEffect } from "react";
-import { companiesData } from "./data";
 import EmployeesTable from "./components/EmployeesTable";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store";

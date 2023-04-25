@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import styles from "./styles.module.scss";
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,8 +17,6 @@ import {
 } from "../../store/mainSlice";
 
 export default function CompanyTable() {
-  const dataCompanies = localStorage.getItem("companies");
-
   const mainStore = useSelector((state: RootState) => state.mainStore);
   const dispatch = useDispatch();
 
