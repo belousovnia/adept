@@ -8,11 +8,12 @@ import {
   canselСompany,
   changeAddressСompany,
   changeNameСompany,
+  createNewEmployee,
   createNewСompany,
   deleteCompanies,
+  rebootCompanies,
   selectAllСompany,
   selectСompany,
-  setCompanies,
 } from "../../store/mainSlice";
 
 export default function CompanyTable() {
@@ -21,84 +22,81 @@ export default function CompanyTable() {
   const mainStore = useSelector((state: RootState) => state.mainStore);
   const dispatch = useDispatch();
 
-  const inputSelectAll = useRef();
+  const inputSelectAll = useRef<HTMLInputElement>(null);
 
   function buildLinesCompanies() {
-    const linesCompanies = [];
-    if (mainStore.companies) {
-      for (const key in mainStore.companies) {
-        if (Object.prototype.hasOwnProperty.call(mainStore.companies, key)) {
-          const element = (
-            <div
-              className={classNames(styles.CompanyTable__line, {
-                [styles.CompanyTable__line_active]:
-                  key in mainStore.selectedСompanies,
-              })}
-              key={key}
-            >
-              <div
-                className={classNames(
-                  styles.CompanyTable__cell,
-                  styles.CompanyTable__colFirst
-                )}
-              >
-                <input
-                  type="checkbox"
-                  onClick={(element) => {
-                    element.currentTarget.checked
-                      ? dispatch(selectСompany(key))
-                      : dispatch(canselСompany(key));
-                  }}
-                  checked={key in mainStore.selectedСompanies}
-                />
-              </div>
-              <div className={styles.CompanyTable__cell}>
-                <input
-                  className={styles.CompanyTable__input}
-                  type="text"
-                  onChange={(element) => {
-                    console.log(element.target.value);
-                    dispatch(
-                      changeNameСompany({
-                        id: key,
-                        newName: element.target.value,
-                      })
-                    );
-                  }}
-                  value={mainStore.companies[key].name}
-                />
-              </div>
-              <div className={styles.CompanyTable__cell}>
-                {Object.keys(mainStore.companies[key].employees).length}
-              </div>
-              <div className={styles.CompanyTable__cell}>
-                <input
-                  className={styles.CompanyTable__input}
-                  type="text"
-                  onChange={(element) => {
-                    console.log(element.target.value);
-                    dispatch(
-                      changeAddressСompany({
-                        id: key,
-                        newAddress: element.target.value,
-                      })
-                    );
-                  }}
-                  value={mainStore.companies[key].address}
-                />
-              </div>
-            </div>
-          );
-          linesCompanies.push(element);
-        }
-      }
-    }
-    return linesCompanies;
+    return mainStore.companies.map((item) => (
+      <div
+        className={classNames(styles.CompanyTable__line, {
+          [styles.CompanyTable__line_active]:
+            !!mainStore.selectedСompanies.find((i) => i.id === item.id),
+        })}
+        key={item.id}
+      >
+        <div
+          className={classNames(
+            styles.CompanyTable__cell,
+            styles.CompanyTable__colFirst
+          )}
+        >
+          <input
+            type="checkbox"
+            onChange={(element) => {
+              if (inputSelectAll.current)
+                inputSelectAll.current.checked = false;
+              element.currentTarget.checked
+                ? dispatch(selectСompany(item.id))
+                : dispatch(canselСompany(item.id));
+            }}
+            checked={
+              !!mainStore.selectedСompanies.find((i) => i.id === item.id)
+            }
+          />
+        </div>
+        <div className={styles.CompanyTable__cell}>
+          <input
+            className={styles.CompanyTable__input}
+            type="text"
+            onChange={(element) => {
+              dispatch(
+                changeNameСompany({
+                  id: item.id,
+                  newName: element.target.value,
+                })
+              );
+            }}
+            value={item.name}
+          />
+        </div>
+        <div className={styles.CompanyTable__cell}>{item.employees.length}</div>
+        <div className={styles.CompanyTable__cell}>
+          <input
+            className={styles.CompanyTable__input}
+            type="text"
+            onChange={(element) => {
+              dispatch(
+                changeAddressСompany({
+                  id: item.id,
+                  newAddress: element.target.value,
+                })
+              );
+            }}
+            value={item.address}
+          />
+        </div>
+        <div
+          className={classNames(
+            styles.CompanyTable__cell,
+            styles.CompanyTable__colHeader
+          )}
+        >
+          <button onClick={() => dispatch(createNewEmployee(item.id))}>
+            +1 Сотрудник
+          </button>
+        </div>
+      </div>
+    ));
   }
-
-  useEffect(() => {
-    if (dataCompanies) dispatch(setCompanies(JSON.parse(dataCompanies)));
-  }, []);
 
   return (
     <div className={styles.CompanyTable}>
@@ -113,6 +111,7 @@ export default function CompanyTable() {
           >
             <input
               type="checkbox"
+              ref={inputSelectAll}
               onChange={(element) => {
                 element.target.checked
                   ? dispatch(selectAllСompany())
@@ -144,13 +143,33 @@ export default function CompanyTable() {
           >
             Адрес
           </div>
+          <div
+            className={classNames(
+              styles.CompanyTable__cell,
+              styles.CompanyTable__colHeader
+            )}
+          ></div>
         </div>
         {buildLinesCompanies()}
       </div>
       <div className={styles.CompanyTable__footer}>
-        <button onClick={() => dispatch(deleteCompanies())}>Удалить</button>
-        <button onClick={() => dispatch(createNewСompany())}>
+        <button
+          className={styles.CompanyTable__footerButton}
+          onClick={() => dispatch(deleteCompanies())}
+        >
+          Удалить
+        </button>
+        <button
+          className={styles.CompanyTable__footerButton}
+          onClick={() => dispatch(createNewСompany())}
+        >
           Новая компания
+        </button>
+        <button
+          className={styles.CompanyTable__footerButton}
+          onClick={() => dispatch(rebootCompanies())}
+        >
+          Сбросить таблицу
         </button>
       </div>
     </div>

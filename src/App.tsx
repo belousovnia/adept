@@ -3,15 +3,18 @@ import CompanyTable from "./components/CompanyTable";
 import Header from "./components/Header";
 import { useEffect } from "react";
 import { companiesData } from "./data";
+import EmployeesTable from "./components/EmployeesTable";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store";
+import { rebootCompanies } from "./store/mainSlice";
 
 function App() {
-  const data = localStorage.getItem("companies");
-  
-  console.log(data);
+  const mainStore = useSelector((state: RootState) => state.mainStore);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!localStorage.getItem("companies")) localStorage.setItem("companies", JSON.stringify(companiesData));
-  }, [])
+    if (!localStorage.getItem("companies")) dispatch(rebootCompanies());
+  }, []);
 
   return (
     <div className={styles.App}>
@@ -20,7 +23,7 @@ function App() {
         <CompanyTable />
       </div>
       <div className={styles.App__block}>
-        {/* <CompanyTable /> */}
+        {mainStore.selectedСompanies.length ? <EmployeesTable /> : ""}
       </div>
     </div>
   );

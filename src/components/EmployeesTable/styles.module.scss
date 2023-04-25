@@ -31,7 +31,7 @@
     width: 100%;
     border-bottom: 1px solid black;
     display: grid;
-    grid-template-columns: 40px 1fr 1fr 1fr 120px;
+    grid-template-columns: 40px 1fr 1fr 1fr;
   }
 
   &__line_active {
@@ -43,7 +43,7 @@
     width: 100%;
     border-bottom: 1px solid black;
     display: grid;
-    grid-template-columns: 40px 1fr 1fr 1fr 120px;
+    grid-template-columns: 40px 1fr 1fr 1fr;
     position: sticky;
     top: 0;
     left: 0;
@@ -58,7 +58,6 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    overflow: hidden;
 
     &:last-child {
       border-right: 0;
